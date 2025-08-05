@@ -185,6 +185,9 @@ function saveSettings() {
 // Helper function to validate email addresses
 function isValidEmail(email) {
     // Simple email regex for basic validation
+    if (typeof email !== 'string' || !email.trim()) {
+        return false;
+    }
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
