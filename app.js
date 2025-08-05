@@ -332,6 +332,18 @@ function toggleReceived(expenseId) {
     }
 }
 
+// Utility to escape HTML special characters
+function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/`/g, '&#96;');
+}
+
 function loadRecentExpenses() {
     const history = JSON.parse(localStorage.getItem('expenseHistory') || '[]');
     const container = document.getElementById('recent-expenses');
@@ -350,7 +362,7 @@ function loadRecentExpenses() {
         return `
             <div class="recent-item ${receivedClass}">
                 <div class="recent-header">
-                    <div class="recent-description">${expense.description}</div>
+                    <div class="recent-description">${escapeHtml(expense.description)}</div>
                     <div class="status-container">
                         <span class="status-icon">${statusIcon}</span>
                         <label class="checkbox-container">
