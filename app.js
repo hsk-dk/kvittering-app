@@ -182,6 +182,12 @@ function saveSettings() {
     alert('Indstillinger gemt!');
 }
 
+// Helper function to validate email addresses
+function isValidEmail(email) {
+    // Simple email regex for basic validation
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 // Send expense
 async function sendExpense() {
     const description = document.getElementById('description').value;
@@ -199,6 +205,10 @@ async function sendExpense() {
     
     if (!settings.treasurerEmail) {
         alert('Kassererens e-mail er ikke indstillet. Gå til indstillinger først.');
+        return;
+    }
+    if (!isValidEmail(settings.treasurerEmail)) {
+        alert('Kassererens e-mail er ugyldig. Indtast en gyldig e-mailadresse.');
         return;
     }
     
@@ -230,7 +240,7 @@ async function sendExpense() {
     }
     
     // Fallback: use mailto link and offer to download images
-    const mailtoLink = `mailto:${settings.treasurerEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+    const mailtoLink = `mailto:${encodeURIComponent(settings.treasurerEmail)}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
     window.location.href = mailtoLink;
     
     // Provide option to download images for manual attachment
