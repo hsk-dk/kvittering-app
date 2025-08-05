@@ -183,7 +183,7 @@ function saveSettings() {
 }
 
 // Send expense
-function sendExpense() {
+async function sendExpense() {
     const description = document.getElementById('description').value;
     const total = receipts.reduce((sum, receipt) => sum + (receipt.amount || 0), 0);
     
@@ -206,17 +206,42 @@ function sendExpense() {
     const emailSubject = `Udlæg for ${settings.associationName || 'foreningen'}`;
     const emailBody = createEmailBody(description, total);
     
-    // Create mailto link
-    const mailtoLink = `mailto:${settings.treasurerEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    
     // Save expense to history
     saveExpenseToHistory(description, total);
     
-    // Open mail app
+    // Try to use Web Share API if available and supports files
+    if (navigator.share && navigator.canShare) {
+        try {
+            const files = await convertReceiptsToFiles();
+            const shareData = {
+                title: emailSubject,
+                text: `${emailBody}\n\nTil: ${settings.treasurerEmail}`,
+                files: files
+            };
+            
+            // Check if we can share files
+            if (navigator.canShare(shareData)) {
+                await navigator.share(shareData);
+                return; // Successfully shared, exit function
+            }
+        } catch (error) {
+            console.log('Web Share API failed, falling back to mailto:', error);
+        }
+    }
+    
+    // Fallback: use mailto link and offer to download images
+    const mailtoLink = `mailto:${settings.treasurerEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
     window.location.href = mailtoLink;
     
-    // Note: Attachments cannot be added via mailto, user will need to add photos manually
-    alert('Mail-appen åbnes nu. Husk at vedhæfte billederne af kvitteringerne manuelt.');
+    // Provide option to download images for manual attachment
+    if (receipts.length > 0) {
+        setTimeout(() => {
+            const downloadImages = confirm('Vil du downloade kvitteringsbillederne, så du kan vedhæfte dem manuelt i din e-mail app?');
+            if (downloadImages) {
+                downloadReceiptImages();
+            }
+        }, 1000);
+    }
 }
 
 function createEmailBody(description, total) {
@@ -237,6 +262,42 @@ function createEmailBody(description, total) {
     body += `Kvitteringerne er vedhæftet som billeder.\n\nVenlig hilsen`;
     
     return body;
+}
+
+// Convert base64 images to File objects for Web Share API
+async function convertReceiptsToFiles() {
+    const files = [];
+    
+    for (let i = 0; i < receipts.length; i++) {
+        const receipt = receipts[i];
+        try {
+            const response = await fetch(receipt.image);
+            const blob = await response.blob();
+            const filename = receipt.filename || `kvittering-${i + 1}.jpg`;
+            const file = new File([blob], filename, { type: blob.type });
+            files.push(file);
+        } catch (error) {
+            console.error('Error converting receipt to file:', error);
+        }
+    }
+    
+    return files;
+}
+
+// Download receipt images as files
+function downloadReceiptImages() {
+    receipts.forEach((receipt, index) => {
+        try {
+            const link = document.createElement('a');
+            link.href = receipt.image;
+            link.download = receipt.filename || `kvittering-${index + 1}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Error downloading receipt:', error);
+        }
+    });
 }
 
 // History management
