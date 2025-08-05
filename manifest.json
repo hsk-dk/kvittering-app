@@ -2,7 +2,7 @@
   "name": "Forenings Udlæg",
   "short_name": "Udlæg",
   "description": "App til at registrere og sende udlæg til foreningens kasserer",
-  "start_url": "/",
+  "start_url": "/kvittering-app/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007AFF",
