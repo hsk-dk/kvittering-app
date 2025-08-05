@@ -334,6 +334,7 @@ function toggleReceived(expenseId) {
 
 // Utility to escape HTML special characters
 function escapeHtml(str) {
+    if (str == null) return '';
     return String(str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
