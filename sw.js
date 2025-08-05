@@ -1,4 +1,4 @@
-const CACHE_NAME = 'expense-app-v1';
+const CACHE_NAME = 'kvittering-app-v1';
 const urlsToCache = [
     '/',
     '/index.html',
