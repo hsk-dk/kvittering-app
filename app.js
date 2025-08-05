@@ -244,10 +244,12 @@ function saveExpenseToHistory(description, total) {
     let history = JSON.parse(localStorage.getItem('expenseHistory') || '[]');
     
     history.unshift({
+        id: Date.now(),
         date: new Date().toISOString(),
         description: description,
         total: total,
-        receiptsCount: receipts.length
+        receiptsCount: receipts.length,
+        received: false
     });
     
     // Keep only last 10 expenses
@@ -255,6 +257,18 @@ function saveExpenseToHistory(description, total) {
     
     localStorage.setItem('expenseHistory', JSON.stringify(history));
     loadRecentExpenses();
+}
+
+// Toggle received status for expense
+function toggleReceived(expenseId) {
+    let history = JSON.parse(localStorage.getItem('expenseHistory') || '[]');
+    const expense = history.find(e => e.id === expenseId);
+    
+    if (expense) {
+        expense.received = !expense.received;
+        localStorage.setItem('expenseHistory', JSON.stringify(history));
+        loadRecentExpenses();
+    }
 }
 
 function loadRecentExpenses() {
@@ -268,11 +282,27 @@ function loadRecentExpenses() {
     
     container.innerHTML = history.map(expense => {
         const date = new Date(expense.date).toLocaleDateString('da-DK');
+        const receivedClass = expense.received ? 'received' : 'pending';
+        const statusIcon = expense.received ? '✅' : '🕐';
+        const amountStyle = expense.received ? 'text-decoration: line-through;' : '';
+        
         return `
-            <div class="recent-item">
-                <div class="recent-description">${expense.description}</div>
+            <div class="recent-item ${receivedClass}">
+                <div class="recent-header">
+                    <div class="recent-description">${expense.description}</div>
+                    <div class="status-container">
+                        <span class="status-icon">${statusIcon}</span>
+                        <label class="checkbox-container">
+                            <input type="checkbox" 
+                                   ${expense.received ? 'checked' : ''} 
+                                   onchange="toggleReceived(${expense.id})"
+                                   title="Marker som modtaget">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
                 <div class="recent-date">${date} • ${expense.receiptsCount} kvittering${expense.receiptsCount > 1 ? 'er' : ''}</div>
-                <div class="recent-amount">${expense.total.toFixed(2)} kr</div>
+                <div class="recent-amount" style="${amountStyle}">${expense.total.toFixed(2)} kr</div>
             </div>
         `;
     }).join('');
