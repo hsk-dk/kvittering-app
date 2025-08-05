@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forenings Udlæg</title>
+    
+    <!-- PWA manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Udlæg">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header>
+            <h1>Forenings Udlæg</h1>
+            <button id="settings-btn" class="icon-btn">⚙️</button>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content">
+            <!-- Home Screen -->
+            <div id="home-screen" class="screen active">
+                <div class="card">
+                    <h2>Opret nyt udlæg</h2>
+                    <button id="new-expense-btn" class="primary-btn">
+                        📷 Start nyt udlæg
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <h3>Seneste udlæg</h3>
+                    <div id="recent-expenses">
+                        <!-- Vil blive fyldt med JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Expense Screen -->
+            <div id="expense-screen" class="screen">
+                <button id="back-btn" class="back-btn">← Tilbage</button>
+                
+                <div class="card">
+                    <h2>Tilføj kvitteringer</h2>
+                    <input type="file" id="camera-input" accept="image/*" capture="camera" multiple style="display: none;">
+                    <button id="add-photo-btn" class="primary-btn">
+                        📷 Tag billede af kvittering
+                    </button>
+                </div>
+
+                <div id="receipts-container">
+                    <!-- Kvitteringer vil blive vist her -->
+                </div>
+
+                <div class="card" id="summary-card" style="display: none;">
+                    <h3>Beskrivelse</h3>
+                    <textarea id="description" placeholder="Kort beskrivelse af udlægget (fx 'Kaffe til møde')"></textarea>
+                    
+                    <h3>Oversigt</h3>
+                    <div id="expense-summary"></div>
+                    
+                    <button id="send-expense-btn" class="primary-btn">
+                        ✉️ Send til kasserer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Settings Screen -->
+            <div id="settings-screen" class="screen">
+                <button id="settings-back-btn" class="back-btn">← Tilbage</button>
+                
+                <div class="card">
+                    <h2>Indstillinger</h2>
+                    
+                    <label for="treasurer-email">Kassererens e-mail:</label>
+                    <input type="email" id="treasurer-email" placeholder="kasserer@forening.dk">
+                    
+                    <label for="account-number">Dit kontonummer:</label>
+                    <input type="text" id="account-number" placeholder="1234 5678901234">
+                    
+                    <label for="association-name">Foreningens navn:</label>
+                    <input type="text" id="association-name" placeholder="Min Forening">
+                    
+                    <button id="save-settings-btn" class="primary-btn">
+                        💾 Gem indstillinger
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
