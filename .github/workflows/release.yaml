@@ -22,18 +22,18 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add ./custom_components/kvittering-app/manifest.json
+          git add ./custom_components/thermex_api/manifest.json
           git commit -m "Updated manifest.json"
           git push origin HEAD:master
       - name: Create zip
         run: |
-          cd custom_components/kvittering-app
+          cd custom_components/thermex_api
           zip kvittering-app.zip -r ./
       - name: Upload zip to release
         uses: svenstaro/upload-release-action@2.11.2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./custom_components/kvittering-app/kvittering-app.zip
+          file: ./custom_components/thermex_api/kvittering-app.zip
           asset_name: kvittering-app.zip
           tag: ${{ github.ref }}
           overwrite: true
