@@ -11,6 +11,8 @@ env:
 jobs:
   release_zip_file:
     name: Prepare release asset
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
